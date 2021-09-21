@@ -1,0 +1,561 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsl:stylesheet version="1.0"
+								xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+								xmlns:msxsl="urn:schemas-microsoft-com:xslt" 
+								xmlns:eft="http://www.infoed.org/schemas/EFormTemplate.xsd"
+								exclude-result-prefixes="msxsl"
+>
+	<xsl:output method="xml" indent="yes"/>
+
+	<xsl:template match="/eft:PageDefinition">
+		<div style="border: 1px solid black; padding: 10px 2px;" xmlns:eft="http://www.infoed.org/schemas/EFormTemplate.xsd">
+			<span class="PageHeader" style="border-bottom: 1px solid #000; width: 99%; float: left;">
+				<span>
+					<xsl:value-of select="@Name" disable-output-escaping="yes"/>
+				</span>
+			</span>
+			<xsl:for-each select="eft:SectionDefinition">
+				<xsl:apply-templates select="." mode="Build" />
+			</xsl:for-each>
+		</div>
+	</xsl:template>
+	<xsl:template name="insertEmptyRows">
+		<xsl:param name="qn" />
+		<xsl:param name="prev_n" />
+		<xsl:if test="$qn > $prev_n">
+			<br class="FormLine">
+				<xsl:attribute name="data-LineNumber">
+					<xsl:value-of select="@QNumber"/>
+				</xsl:attribute>
+			</br>
+			<xsl:call-template name="insertEmptyRows">
+				<xsl:with-param name="qn" select="$qn"/>
+				<xsl:with-param name="prev_n" select="$prev_n + 1"/>
+			</xsl:call-template>
+		</xsl:if>
+	</xsl:template>
+	<xsl:template match="eft:SectionDefinition" mode="Build">
+		<xsl:variable name="sSectStyle">
+			<xsl:text>padding: 5px; margin: 1px 1px 7px;margin-top: 50px;</xsl:text>
+			<xsl:if test="@Border = 1">border: 1px solid #000; padding: 10px;</xsl:if>  
+		</xsl:variable>
+		<xsl:variable name="sHeaderStyle">
+      <xsl:text>border-bottom: 1px solid #CCC;</xsl:text>
+			<xsl:text> text-align: </xsl:text>
+			<xsl:value-of select="@Align"/>
+			<xsl:text>;</xsl:text>
+			<xsl:if test="@Bold = 1">font-weight: bold;</xsl:if>
+			<xsl:if test="@Italic = 1">font-style: italic;</xsl:if>
+			<xsl:if test="@FontSize = 2">font-size: 12px;</xsl:if>
+			<xsl:if test="@FontSize = 3">font-size: 16px;</xsl:if>
+		</xsl:variable>
+    
+		<xsl:choose>
+      <xsl:when test="@mode = 'vrepeating'">
+        <eft:RepeatingSection>
+          <xsl:attribute name="SectionId">
+            <xsl:value-of select="@id"/>
+          </xsl:attribute>
+          <xsl:attribute name="style">
+            <xsl:value-of select="$sSectStyle"/>
+          </xsl:attribute>
+          <eft:SectionControls>
+            <xsl:attribute name="ElementId">
+              <xsl:value-of select="@id"/>
+            </xsl:attribute>
+          </eft:SectionControls>
+          <table cellspacing="0" cellpadding="0" border="0" width="100%">
+            <xsl:attribute name="style">
+              <xsl:value-of select="$sHeaderStyle"/>
+            </xsl:attribute>
+            <tbody>
+              <tr valign="top">
+                <td title="Edit Section Properties">
+                  <div style="vertical-align: bottom;">
+                    <xsl:attribute name="class">
+                      SFontSize<xsl:value-of select="@FontSize"/>
+                    </xsl:attribute>
+                    <xsl:value-of select="@Name" disable-output-escaping="yes"/>
+                  </div>
+                </td>
+                <td align="right" width="1%">
+                  <eft:SectionAddControl HtmlTag="div">
+                    <div class="css_icon add_icon" alt="AddNew" title="add" />
+                  </eft:SectionAddControl>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="padding: 2px; width: 50%; border: 1px solid #ddd; display: none;">
+            <xsl:attribute name="class">vheader<xsl:value-of select="@id"/></xsl:attribute>
+            <table class="datatable" width="100%">
+                <tr>
+				            <td align="right" width="100%">&#160;
+                    </td>
+			          </tr>
+                <xsl:for-each select="eft:QuestionDefinition">
+                <tr>
+                  <td width="100%">
+                    <xsl:attribute name="align">
+                      <xsl:choose>
+                        <xsl:when test="@QAlign = 1">right</xsl:when>
+                        <xsl:when test="@QAlign = 2">center</xsl:when>
+                        <xsl:otherwise>
+                          <xsl:text>left</xsl:text>
+                        </xsl:otherwise>
+                      </xsl:choose>
+                    </xsl:attribute>
+                    <xsl:attribute name="style">
+                      <xsl:if test="@QBold = 1">font-weight: bold;</xsl:if>
+                      <xsl:if test="@QItalic = 1">font-style: italic;</xsl:if>
+                    </xsl:attribute>
+                    <div>
+                      <xsl:apply-templates select="." mode="Label" />&#160;
+                    </div>
+                  </td>
+                </tr>
+              </xsl:for-each>
+            </table>
+          </div>
+          <div style="padding: 2px; width: 100%; border: 1px solid #ddd; ">
+            
+              <eft:RepeatingSectionItem HtmlTag="div" bgcolor="#ededed" valign="top">
+                <table class="datatable" width="100%">
+				<tr>
+				<td colspan="2" align="right" width="1">
+                  <eft:SectionDeleteControl>
+                    <div class="removeLink" title="delete" />
+                  </eft:SectionDeleteControl>
+               </td>
+			   </tr>
+				<xsl:for-each select="eft:QuestionDefinition">
+                  <tr>
+                    <xsl:apply-templates select="." mode="VLabel" />
+                  
+                    <td>
+                      <xsl:attribute name="align">
+                        <xsl:choose>
+                          <xsl:when test="@QAlign = 1">right</xsl:when>
+                          <xsl:when test="@QAlign = 2">center</xsl:when>
+                          <xsl:otherwise>
+                            <xsl:text>left</xsl:text>
+                          </xsl:otherwise>
+                        </xsl:choose>
+                      </xsl:attribute>
+                      <xsl:attribute name="style">
+                      <xsl:text>width: 100%;</xsl:text>                      
+                    </xsl:attribute>
+                      <eft:VisibilityLink data-StyleContainer="true">
+                        <xsl:attribute name="ElementId">
+                          <xsl:value-of select="@id"/>
+                        </xsl:attribute>
+                        <xsl:attribute name="data-LineNumber">
+                          <xsl:value-of select="@QNumber"/>
+                        </xsl:attribute>
+                        <eft:QuestionControls>
+                          <xsl:attribute name="ElementId">
+                            <xsl:value-of select="@id"/>
+                          </xsl:attribute>
+                        </eft:QuestionControls>
+                        <xsl:apply-templates select="." mode="Input" />
+                      </eft:VisibilityLink>
+                    </td>
+                  </tr>
+                </xsl:for-each>
+              </table>
+			        <br/><br/>
+            </eft:RepeatingSectionItem>
+          </div>
+        </eft:RepeatingSection>
+      </xsl:when>
+			<xsl:when test="@mode = 'repeating'">
+				<eft:RepeatingSection>
+					<xsl:attribute name="SectionId">
+						<xsl:value-of select="@id"/>
+					</xsl:attribute>
+					<xsl:attribute name="style">
+						<xsl:value-of select="$sSectStyle"/>
+					</xsl:attribute>
+					<eft:SectionControls>
+						<xsl:attribute name="ElementId">
+							<xsl:value-of select="@id"/>
+						</xsl:attribute>
+					</eft:SectionControls>
+					<table cellspacing="0" cellpadding="0" border="0" width="100%">
+						<xsl:attribute name="style">
+							<xsl:value-of select="$sHeaderStyle"/>
+						</xsl:attribute>
+						<tbody>
+							<tr valign="top">
+								<td align="left" title="Edit Section Properties">
+									<font size="2" style="vertical-align: bottom;">
+										<b>
+											<xsl:value-of select="@Name" disable-output-escaping="yes"/>
+										</b>
+									</font>
+								</td>
+								<td align="right" width="1%" style="white-space:nowrap;">
+                  <xsl:if test="../@QAnswerType='LINKAGES'">
+                    <eft:SectionAddLinkagesControl HtmlTag="div">
+                      <select class="css_dropdown linkages_dropdown"></select>
+                    </eft:SectionAddLinkagesControl>
+                  </xsl:if>
+									<eft:SectionAddControl HtmlTag="div">
+										<div class="newAddBtn" alt="Add" title="add">Add</div>
+									</eft:SectionAddControl>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<div style="padding: 2px; width: 100%; border: 1px solid #ddd;">
+						<table class="datatable">
+								<tr>
+									<xsl:for-each select="eft:QuestionDefinition">
+										<td align="left">
+												<xsl:apply-templates select="." mode="Label" />
+										</td>
+									</xsl:for-each>
+									<td></td>
+								</tr>
+								<eft:RepeatingSectionItem HtmlTag="tr" bgcolor="#ededed" valign="top">
+											<xsl:for-each select="eft:QuestionDefinition">
+												<td>
+													<eft:VisibilityLink data-StyleContainer="true">
+														<xsl:attribute name="ElementId">
+															<xsl:value-of select="@id"/>
+														</xsl:attribute>
+														<xsl:attribute name="data-LineNumber">
+															<xsl:value-of select="@QNumber"/>
+														</xsl:attribute>
+														<eft:QuestionControls>
+															<xsl:attribute name="ElementId">
+																<xsl:value-of select="@id"/>
+															</xsl:attribute>
+														</eft:QuestionControls>
+														<xsl:apply-templates select="." mode="Input" />
+													</eft:VisibilityLink>
+											</td>
+										</xsl:for-each>
+										<td style="text-align: right;">
+											<eft:SectionDeleteControl>
+												<div class="removeLink" title="delete">Remove</div>
+											</eft:SectionDeleteControl>
+										</td>
+							</eft:RepeatingSectionItem>
+						</table>
+					</div>
+				</eft:RepeatingSection>
+			</xsl:when>
+			<xsl:when test="@mode = 'mappedpage'">
+				<div>
+					<div class="PageMappedObject">
+						<eft:RepeatingSection>
+							<xsl:attribute name="SectionId">
+								<xsl:value-of select="@id"/>
+							</xsl:attribute>
+							<div>
+								<div style="margin-top: 15px;" class="sectionlabel">
+				                  <img style="cursor:pointer;" src="/pic/icon/dropdown.gif" class="ShowHideGroupControl" />
+				                  <span class="QuestionLabel bold">
+				                    <xsl:value-of select="@Name" disable-output-escaping="yes" />
+				                  </span>
+				                  <span class="ShowHideVis">
+				                    <eft:SectionAddControl>
+				                      <xsl:attribute name="SectionID">
+				                        <xsl:value-of select="@id" />
+				                      </xsl:attribute>
+				                      <div class="css_icon add_icon" alt="Add" title="add" />
+				                    </eft:SectionAddControl>
+				                  </span>
+				                </div>
+								<eft:RepeatingSectionItem HtmlTag="div" class="ShowHideGroupDetail">
+									<xsl:if test="@PrimaryQuestionId">
+										<eft:ValueCopy>
+											<xsl:attribute name="QuestionId">
+												<xsl:value-of select="@PrimaryQuestionId"/>
+											</xsl:attribute>
+										</eft:ValueCopy>
+									</xsl:if>
+									<div class="PageMappedContent">
+										<div style="border: 1px solid #AAA;">
+											<xsl:apply-templates select="." mode="BuildInner">
+                        						<xsl:with-param name="includeSectControls" select="1" />
+                      						</xsl:apply-templates>
+										</div>
+										<xsl:for-each select="eft:SectionDefinition">
+											<xsl:apply-templates select="." mode="Build" />
+										</xsl:for-each>
+									</div>
+								</eft:RepeatingSectionItem>
+							</div>
+						</eft:RepeatingSection>
+					</div>
+				</div>
+			</xsl:when>
+			<xsl:otherwise>
+				<eft:Section>
+					<xsl:attribute name="SectionId">
+						<xsl:value-of select="@id"/>
+					</xsl:attribute>
+					<xsl:attribute name="style">
+						<xsl:value-of select="$sSectStyle"/>margin: 1px 1px 7px;
+					</xsl:attribute>
+					<div>
+						<xsl:attribute name="style">
+							<xsl:value-of select="$sHeaderStyle"/>
+						</xsl:attribute>
+						<eft:SectionControls>
+							<xsl:attribute name="ElementId">
+								<xsl:value-of select="@id"/>
+							</xsl:attribute>
+						</eft:SectionControls>
+						<xsl:value-of select="@Name" disable-output-escaping="yes"/>
+					</div>
+					<div>
+						<xsl:apply-templates select="." mode="BuildInner" />
+					</div>
+				</eft:Section>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>
+	<xsl:template match="eft:SectionDefinition" mode="BuildInner">
+		<xsl:param name="includeSectControls" select="0" />
+		<xsl:for-each select="eft:QuestionDefinition">
+			<xsl:variable name="qn" select="@QNumber" />
+			<xsl:variable name="prev_n" select="preceding-sibling::eft:QuestionDefinition[1]/@QNumber + 1" />
+			<xsl:call-template name="insertEmptyRows">
+				<xsl:with-param name="qn" select="$qn"/>
+				<xsl:with-param name="prev_n" select="$prev_n"/>
+			</xsl:call-template>
+			<xsl:if test="count(preceding-sibling::eft:QuestionDefinition[@QNumber = $qn]) = 0">
+				<table class="FormLine" width="99%" cellspacing="0" cellpadding="0">
+					<tr valign="top">
+						<xsl:variable name="TotalWidth" select="sum(parent::eft:SectionDefinition/eft:QuestionDefinition[@QNumber = $qn]/@LayOutWidth)" />
+						<xsl:for-each select="parent::eft:SectionDefinition/eft:QuestionDefinition[@QNumber = $qn]">
+							<td valign="top">
+								<xsl:attribute name="width">
+									<xsl:value-of select="floor((100*@LayOutWidth) div $TotalWidth)" />
+									<xsl:text>%</xsl:text>
+								</xsl:attribute>
+								<xsl:attribute name="align">
+									<xsl:choose>
+										<xsl:when test="@QAlign = 1">right</xsl:when>
+										<xsl:when test="@QAlign = 2">center</xsl:when>
+									</xsl:choose>
+								</xsl:attribute>
+								<xsl:apply-templates select="." mode="Build" />
+							</td>
+						</xsl:for-each>
+						<xsl:if test="$includeSectControls = '1' and position()=1">
+			              <td valign="top" style="white-space:nowrap;">
+			                <span class="ShowHideVis">
+			                  <eft:SectionDeleteControl>
+			                    <xsl:attribute name="SectionID">
+			                      <xsl:value-of select="@id"/>
+			                    </xsl:attribute>
+			                    <xsl:text>Delete </xsl:text>
+			                    <xsl:value-of select="../@Name" disable-output-escaping="yes" />
+			                  </eft:SectionDeleteControl>
+			                </span>
+			              </td>
+			            </xsl:if>
+					</tr>
+				</table>
+			</xsl:if>
+		</xsl:for-each>
+	</xsl:template>
+	<xsl:template match="eft:QuestionDefinition" mode="Build">
+		<eft:VisibilityLink data-StyleContainer="true">
+			<xsl:attribute name="ElementId">
+				<xsl:value-of select="@id"/>
+			</xsl:attribute>
+			<xsl:attribute name="data-LineNumber">
+				<xsl:value-of select="@QNumber"/>
+			</xsl:attribute>
+			<table cellspacing="0" cellpadding="0" style="margin-left: 4px;">
+				<xsl:if test="@QAnswerType = 'BDGTSUMMARY' or @QAnswerType = 'PERSONNELLIST' or @QAnswerType = 'PTAWARDEDLIST' or @QAnswerType = 'PDREQUESTEDLIST'">
+					<xsl:attribute name="width">100%</xsl:attribute>
+				</xsl:if>
+
+				<xsl:variable name="QuestionControls">
+					<eft:QuestionControls>
+						<xsl:attribute name="ElementId">
+							<xsl:value-of select="@id"/>
+						</xsl:attribute>
+					</eft:QuestionControls>
+				</xsl:variable>
+				<xsl:variable name="QuestionLabel">
+					<xsl:apply-templates select="." mode="Label" />
+				</xsl:variable>
+				<xsl:variable name="QuestionInput">
+					<xsl:apply-templates select="." mode="Input" />         
+				</xsl:variable>
+				<xsl:variable name="InputVAlign">
+					<xsl:choose>
+						<xsl:when test="@QAnswerType = 'T' and (@QAnswerStyle = 'TA' or @QAnswerStyle = 'EXT')">top</xsl:when>
+						<xsl:otherwise>bottom</xsl:otherwise>
+					</xsl:choose>
+				</xsl:variable>
+				<xsl:variable name="InputStyle">
+					<xsl:if test="@QAnswerType = 'T' and (@QAnswerStyle = 'TA' or @QAnswerStyle = 'EXT')">padding-top:4px; </xsl:if>
+				</xsl:variable>
+
+				<xsl:choose>
+					<xsl:when test="@QPosition = 0">
+						<!-- left -->
+						<tr>
+							<td valign="top">
+								<xsl:copy-of select="$QuestionControls" />
+							</td>
+							<td valign="bottom" style="padding-right: 10px;">
+								<xsl:copy-of select="$QuestionInput" />
+							</td>
+							<td>
+								<xsl:attribute name="valign">
+									<xsl:value-of select="$InputVAlign"/>
+								</xsl:attribute>
+								<xsl:attribute name="style">
+									<xsl:value-of select="$InputStyle"/>
+								</xsl:attribute>
+								<xsl:copy-of select="$QuestionLabel" />
+							</td>
+						</tr>
+					</xsl:when>
+					<xsl:when test="@QPosition = 1">
+						<!-- right -->
+						<tr>
+							<td valign="top">
+								<xsl:copy-of select="$QuestionControls" />
+							</td>
+							<td>
+								<xsl:attribute name="valign">
+									<xsl:value-of select="$InputVAlign"/>
+								</xsl:attribute>
+								<xsl:attribute name="style">
+									<xsl:value-of select="$InputStyle"/>
+								</xsl:attribute>
+								<xsl:copy-of select="$QuestionLabel" />
+							</td>
+              <td valign="bottom" class="rightresponse">
+                <xsl:attribute name="style">
+                  <xsl:value-of select="$InputStyle" />
+                </xsl:attribute>
+								<xsl:copy-of select="$QuestionInput" />
+							</td>
+						</tr>
+					</xsl:when>
+					<xsl:when test="@QPosition = 2">
+						<!-- top -->
+						<tr valign="top">
+							<td rowspan="2" valign="middle">
+								<xsl:copy-of select="$QuestionControls" />
+							</td>
+							<td valign="top">
+								<xsl:copy-of select="$QuestionInput" />
+							</td>
+						</tr>
+						<tr valign="top">
+							<td valign="top">
+								<xsl:copy-of select="$QuestionLabel" />
+							</td>
+						</tr>
+					</xsl:when>
+					<xsl:when test="@QPosition = 3">
+						<!-- bottom -->
+						<tr valign="top">
+							<td rowspan="2" valign="middle">
+								<xsl:copy-of select="$QuestionControls" />
+							</td>
+							<td class="QuestionLabel" valign="top">
+								<xsl:copy-of select="$QuestionLabel" />
+							</td>
+						</tr>
+						<tr valign="top">
+							<td valign="top">
+								<xsl:copy-of select="$QuestionInput" />
+            </td>
+						</tr>
+					</xsl:when>
+				</xsl:choose>
+			</table>
+		</eft:VisibilityLink>
+	</xsl:template>
+	<xsl:template match="eft:QuestionDefinition" mode="Input">
+		<xsl:choose>
+			<xsl:when test="@QAnswerType = 'I'"><!-- Info question - no input. --></xsl:when>
+			<xsl:when test="@QAnswerType = 'X' or @QAnswerType='LINKAGES'">
+				<xsl:apply-templates select="./*" mode="Build" />
+			</xsl:when>
+			<xsl:otherwise>
+				<div>
+					<xsl:attribute name="class">
+						<xsl:if test="@AnsFontSize != 1">
+							AnsFontSize<xsl:value-of select="@AnsFontSize"/>
+						</xsl:if>
+						<xsl:if test="@AnsItalicText = 1"> AnsItalicText</xsl:if>
+						<xsl:if test="@AnsBoldText = 1"> AnsBoldText</xsl:if>
+					</xsl:attribute>
+					<eft:Input>
+						<xsl:attribute name="QuestionId">
+							<xsl:value-of select="@id"/>
+						</xsl:attribute>
+					</eft:Input>
+					<xsl:if test="@Qunits">
+						<span>
+							<xsl:value-of select="@Qunits" disable-output-escaping="yes"/>
+						</span>
+					</xsl:if>
+				</div>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>
+	<xsl:template match="eft:QuestionDefinition" mode="Label">
+    <xsl:if test="@QAnswerType != 'Q'">
+		  <span>
+			  <xsl:attribute name="class">
+				  QuestionLabel
+					<xsl:if test="@QFontSize != 1">
+					  QFontSize<xsl:value-of select="@QFontSize"/>
+					</xsl:if>
+				  <xsl:if test="@QItalicText = 1"> QItalicText</xsl:if>
+				  <xsl:if test="@QBoldText = 1"> QBoldText</xsl:if>
+			  </xsl:attribute>
+			  <xsl:if test="@QMandatory = 1">
+				  <span class="mandatoryMarker">*</span>
+			  </xsl:if>
+			  <span><xsl:value-of select="@Label" disable-output-escaping="yes"/></span>
+		  </span>
+    </xsl:if>
+	</xsl:template>
+  <xsl:template match="eft:QuestionDefinition" mode="VLabel">
+    <xsl:param name="text" select="@Label"/>
+        <xsl:param name="limit" select="65" />
+      <td>
+                    <xsl:attribute name="align">
+                      <xsl:choose>
+                        <xsl:when test="@QAlign = 1">right</xsl:when>
+                        <xsl:when test="@QAlign = 2">center</xsl:when>
+                        <xsl:otherwise>
+                          <xsl:text>left</xsl:text>
+                        </xsl:otherwise>
+                      </xsl:choose>
+                    </xsl:attribute>
+                    <xsl:attribute name="style">
+                      <xsl:if test="@QBold = 1">font-weight: bold;</xsl:if>
+                      <xsl:if test="@QItalic = 1">font-style: italic;</xsl:if>
+                       <xsl:choose>
+            <!-- Text length is less than or equal 65 characters -->
+            <xsl:when test="string-length($text) &lt;= $limit">
+                <xsl:text>white-space: nowrap;</xsl:text>
+            </xsl:when>
+              <xsl:otherwise>
+               <xsl:text>width: 50%;</xsl:text>
+            </xsl:otherwise>
+        </xsl:choose>                        
+                    </xsl:attribute>
+                    <div>
+                      <xsl:apply-templates select="." mode="Label" />
+                    </div>
+                  </td>
+	</xsl:template>
+</xsl:stylesheet>

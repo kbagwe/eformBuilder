@@ -1,0 +1,193 @@
+@import url("/shared/main.css");
+
+.PDF_Mode .content 
+{font-size:7pt;}
+
+.k-widget.k-window .k-window-titlebar.k-header {
+    height: auto;
+    position: relative;
+    top: 0;
+}
+
+.k-widget.k-window .k-window-titlebar.k-header .k-window-title {
+    position: relative;
+    white-space: normal;
+    padding: 0 15px 15px 15px;
+    display: inline-block;
+}
+
+.k-widget.k-window .k-window-titlebar.k-header .k-window-title li {
+    margin-left: 25px;
+}
+
+div.k-window-content {
+    position: relative;
+    top: 0;
+}
+
+
+input,select,textarea
+{
+	font-size: 9px;
+	font-family: verdana;
+}
+
+.formfield {
+	font-size: 9px;
+}
+
+.tabledata {
+	font-size: 9px;
+	color: #000000;
+}
+
+.tabledatahl {
+	font-size: 9px;
+}
+
+.formlabel {
+	font-size: 9px;
+}
+
+.columnhead {
+	font-size: 9px;
+}
+
+.bloct{
+	border-top: #000000 1px solid;
+}
+
+.blocl{
+	BORDER-LEFT: #000000 1px solid;
+}
+
+.blocr{
+	BORDER-RIGHT: #000000 1px solid;
+}
+
+.blocb{
+	BORDER-BOTTOM: #000000 1px solid;
+}
+
+.gginfo td.info{
+	font-size: 10px;
+}
+
+.gginfo td.data{
+	font-weight: bold;
+}
+			
+.sectionHeader,
+.EftSection.EFormGUIElement div {
+	border-bottom: 1px solid #aaa;
+	color: #19417f;
+}
+
+.EftQuestion.EFormGUIElement.FormInput table thead tr td {
+	background: #ddecff;
+	color: #19417f;
+}
+
+.EftQuestion.EFormGUIElement.FormInput table tr td {
+	padding: 5px;
+}
+
+.QuestionLabel {
+	color: #000000;
+	margin-right: 10px;
+}
+
+.FormInputContainer.NoValue,
+table div:not(.rtfQuestion),
+.EFormPage div:not(.rtfQuestion),
+.PageBreak div {
+	border-bottom: 0 !important;
+	border: 0 !important;
+}
+
+.TextQuestion.FormInput,
+.TextQuestion.FormInput div {
+	color: #000000;
+	font-weight: normal;
+}
+
+.css_icon {
+	display: inline-block;
+	cursor: pointer;
+	height: 15px;
+	width: 15px;
+}
+
+.edit.Icon:disabled,
+.edit.Icon.disabled,
+.delete.Icon:disabled,
+.delete.Icon.disabled {
+    opacity: 0.3;
+    cursor: initial;
+}
+
+.delete_icon {background: url(/pic/icon/grey_close.png);}
+
+.add_icon {
+    margin-right:5px;
+}
+.add_icon:before {
+   content: "Add";
+}
+
+.QFontSize.QuestionLabel, .QFontSize  .QuestionLabel, 
+.AnsFontSize , .AnsFontSize  .FormInput,
+.SFontSize,
+.QFontSize1.QuestionLabel, .QFontSize1  .QuestionLabel, 
+.AnsFontSize1, .AnsFontSize1  .FormInput,
+.SFontSize1 {
+    font-size: 7pt;
+}
+
+.AnsFontSize1.YesNoQuestion, .AnsFontSize1  .YesNoQuestion, .AnsFontSize2.YesNoQuestion, 
+.AnsFontSize2  .YesNoQuestion, .AnsFontSize.YesNoQuestion, .AnsFontSize  .YesNoQuestion
+{
+    font-size: 7pt;
+    height: 15px;
+	width: 15px;
+}
+
+.QFontSize2.QuestionLabel, .QFontSize2  .QuestionLabel, 
+.AnsFontSize2, .AnsFontSize2  .FormInput,
+.SFontSize2 {
+    font-size: 10pt;
+}
+
+.QFontSize3.QuestionLabel, .QFontSize3  .QuestionLabel, 
+.AnsFontSize3, .AnsFontSize3  .FormInput,
+.SFontSize3 {
+    font-size: 12pt;
+}
+
+.QBoldText.QuestionLabel,  .QBoldText   .QuestionLabel, 
+.AnsBoldText   .FormInput *, .AnsBoldText   .FormInput
+ {font-weight: bold;}
+
+.QItalicText.QuestionLabel,.QItalicText .QuestionLabel, 
+.AnsItalicText .FormInput *, .AnsItalicText .FormInput 
+{font-style: italic;}
+
+.eformControl.inactive {
+    display: none;
+}
+
+.PageHeader {
+    width: 100% !important; /*over writing inline styles*/
+}
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+    textarea, iframe {
+        overflow: hidden;
+    }
+}
+
+.HiliteResponseRequired .responseRequired{
+    outline: 1px solid red;
+    padding:5px 8px 5px 0;
+    margin:8px 0; 
+}

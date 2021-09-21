@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<div style="border:1px solid #aaaaaa;padding:5px;" xmlns="http://www.w3.org/1999/xhtml" xmlns:eft="http://www.infoed.org/schemas/EFormTemplate.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/1999/xhtml xsd/EFormTemplate.xsd">
+	<table style="float:right;width:auto;" border="0">
+		<tbody>
+			<tr>
+        <td class="columnHeaderSmall2" align="right" style="vertical-align:bottom;">
+            <eft:FormControl Type="validateForm">
+              <a href="#" class="btn">Validate</a>
+            </eft:FormControl>
+        </td>
+				<td class="columnHeaderSmall2" align="right">
+					<div id="CompleteDiv">
+            			<eft:Complete />
+            				<label for="completed">Complete</label>
+            				<eft:FormControl Type="PDF" HtmlTag="span">
+              					<img alt="PDF" src="/pic/icon/pdf_icon.gif" style="cursor: pointer;"/>
+            				</eft:FormControl>
+          			</div>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<div class="content">
+		<!-- ACTUAL PAGE CONTENT GOES HERE -->
+		<eft:PageDisplay />
+		<!-- ACTUAL PAGE CONTENT ENDS HERE -->
+	</div> 
+</div>
